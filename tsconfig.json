@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "sourceMap": true,
+        "lib": [
+            "es2017"
+        ],
+        "target": "es2017",
+        "inlineSourceMap": true,
+        "strictNullChecks": true,
+        "module": "commonjs"
+    }
+}
