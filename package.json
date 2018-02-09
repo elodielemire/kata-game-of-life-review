@@ -2,10 +2,10 @@
   "name": "kata-game-of-life-review",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "build": "npx tsc --outDir ./dist ./src/index.ts --lib es2017",
+    "build": "npx tsc --outDir ./dist ./src/main.ts",
     "build:watch": "npm run build -- --watch",
+    "start": "nodemon ./dist/main.js",
     "test": "npx jest",
     "test:watch": "npm run test -- --watch"
   },
@@ -13,7 +13,9 @@
   "license": "ISC",
   "devDependencies": {
     "@types/jest": "^22.1.1",
+    "@types/node": "^8.9.1",
     "jest": "^22.1.4",
+    "nodemon": "^1.14.12",
     "prettier": "^1.10.2",
     "ts-jest": "^22.0.3",
     "typescript": "^2.7.1"

@@ -1,12 +1,21 @@
 import Cell from './Cell';
 
+class CellsLengthNotMultipleOfColumnsCount extends RangeError {}
+
 class World {
     private cells: Cell[];
     private columns: number;
 
-    constructor(colums: number, cells: Cell[]) {
+    static CellsLengthNotMultipleOfColumnsCount = CellsLengthNotMultipleOfColumnsCount;
+
+    constructor(columns: number, cells: Cell[]) {
         this.cells = cells;
-        this.columns = colums;
+        this.columns = columns;
+
+        if (cells.length % columns !== 0) {
+            const msg = `You provided ${this.cells.length} cells but it has to be a multiple of ${this.columns}`;
+            throw new World.CellsLengthNotMultipleOfColumnsCount(msg);
+        }
     }
 
     static buildRandom(colums: number, lines: number): World {
@@ -41,6 +50,52 @@ class World {
             ];
 
         }, []);
+    }
+
+    getNeighbors(cellIndex: number) {
+        const cellToTest: Cell = this.cells[cellIndex];
+
+        const cellTop = this.cells[cellIndex - this.columns];
+        const cellBottom = this.cells[cellIndex + this.columns];
+
+        const cellLeft = (cellIndex % this.columns !== 0) && this.cells[cellIndex - 1];
+        const cellRight = (cellIndex % this.columns !== this.columns - 1) && this.cells[cellIndex + 1];
+
+        const cellTopLeft = (cellTop && cellLeft) && this.cells[cellIndex - this.columns - 1];
+        const cellTopRight = (cellTop && cellRight) && this.cells[cellIndex - this.columns + 1];
+
+        const cellBottomLeft = (cellBottom && cellLeft) && this.cells[cellIndex + this.columns - 1];
+        const cellBottomRight = (cellBottom && cellRight) && this.cells[cellIndex + this.columns + 1];
+
+        return [
+            cellTop,
+            cellBottom,
+            cellLeft,
+            cellRight,
+            cellTopLeft,
+            cellTopRight,
+            cellBottomLeft,
+            cellBottomRight
+        ].filter(Boolean);
+    }
+
+    getAliveNeighbors(cellIndex: number) {
+        return this.getNeighbors(cellIndex).filter(
+            cell => cell instanceof Cell && cell.isAlive()
+        );
+    }
+
+    next(): void {
+        this.cells = this.cells.map((cell, index) => {
+            switch (this.getAliveNeighbors(index).length) {
+                case 3:
+                    return cell.live();
+                case 2:
+                    return cell;
+                default:
+                    return cell.die();
+            }
+        })
     }
 }
 
